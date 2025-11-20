@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Junizox | Registro y Sorteos</title>
+<style>
+  :root{
+    --bg:#050505;
+    --card:rgba(20,20,20,0.9);
+    --gold:#d4af37;
+    --accent:#0ea5a4;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 10% 10%, rgba(212,175,55,0.06), transparent),
+      linear-gradient(180deg,#00120a 0%, #000000 100%);
+    color:#fff;
+    font-family:Inter, system-ui, Arial, Helvetica, sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:30px;
+    overflow:hidden;
+  }
+
+  .page {
+    width:100%;
+    max-width:980px;
+    display:grid;
+    grid-template-columns:1fr 420px;
+    gap:24px;
+    align-items:start;
+  }
+
+  .left {
+    background:var(--card);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    position:relative;
+    overflow:hidden;
+  }
+
+  h1{margin:6px 0 8px;font-size:28px;letter-spacing:0.4px}
+  p.lead{color:#ddd;margin:0 0 16px}
+
+  .robux-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .pack{
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.12));
+    padding:14px 12px;
+    border-radius:12px;
+    min-width:110px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform .18s, box-shadow .18s, background .18s;
+    border:2px solid transparent;
+    user-select:none;
+  }
+  .pack.selected{
+    transform:translateY(-6px);
+    box-shadow:0 18px 40px rgba(0,0,0,0.6);
+    background:linear-gradient(180deg, rgba(212,175,55,0.14), rgba(0,0,0,0.18));
+    border-color:rgba(212,175,55,0.6);
+  }
+  .pack .amount{font-weight:700;color:var(--gold);font-size:18px}
+  .pack .label{font-size:13px;color:#ddd;margin-top:6px}
+
+  .rules{
+    font-size:13px;
+    color:#cfcfcf;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    padding:10px;border-radius:10px;margin-top:8px;
+  }
+
+  form {
+    margin-top:16px;
+    display:grid;
+    gap:10px;
+  }
+  input[type="text"], input[type="email"]{
+    width:100%;padding:10px;border-radius:10px;border:none;background:#0b0b0b;color:#fff;
+    outline:2px solid transparent;transition:outline .12s;
+  }
+  input:focus{outline:2px solid rgba(212,175,55,0.18)}
+
+  button.primary{
+    background:linear-gradient(90deg,var(--gold),#ffd96b);
+    color:#000;border:none;padding:12px;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;
+  }
+  button.primary:active{transform:translateY(2px)}
+
+  .right {
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+    border-radius:14px;padding:16px;
+    height:100%;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  }
+  .preview{
+    display:flex;gap:12px;align-items:center;
+  }
+  .avatar{
+    width:96px;height:96px;border-radius:14px;background:linear-gradient(180deg,#222,#070707);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold);font-size:30px;
+    border:3px solid rgba(212,175,55,0.08)
+  }
+
+  .status{margin-top:12px;font-size:15px;color:#dcdcdc}
+  .confirm{display:none;margin-top:12px;padding:12px;background:rgba(212,175,55,0.06);border-radius:10px;color:var(--gold);font-weight:700;text-align:center}
+  .btn-ir{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#06b23a;color:#fff;text-decoration:none;display:inline-block;text-align:center}
+
+  /* falling shapes */
+  .fall-area{position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none}
+  .coin{
+    position:absolute;width:36px;height:36px;border-radius:6px;background:linear-gradient(180deg,#f7d47a,#c98c1a);
+    box-shadow:0 4px 8px rgba(0,0,0,0.4);opacity:0.95;
+    transform:rotate(10deg);
+    animation:fall linear forwards;
+  }
+  @keyframes fall{ to { transform: translateY(120vh) rotate(360deg); opacity:0.8 } }
+
+  /* small responsive */
+  @media(max-width:900px){
+    .page{grid-template-columns:1fr;}
+    .right{order:2}
+  }
+</style>
+</head>
+<body>
+<div class="page" role="main">
+  <div class="left" aria-labelledby="title">
+    <h1 id="title">Junizox - Registro & Sorteos</h1>
+    <p class="lead">Bienvenido. Regístrate para participar en actividades y sorteos oficiales (no prometemos Robux fuera de reglas). Comparte tu usuario y participa en dinámicas justas.</p>
+
+    <div class="robux-row" id="packs">
+      <div class="pack" data-value="10" tabindex="0">
+        <div class="amount">10 Robux</div>
+        <div class="label">Sorteo básico</div>
+      </div>
+      <div class="pack" data-value="50" tabindex="0">
+        <div class="amount">50 Robux</div>
+        <div class="label">Sorteo intermedio</div>
+      </div>
+      <div class="pack" data-value="100" tabindex="0">
+        <div class="amount">100 Robux</div>
+        <div class="label">Sorteo premium</div>
+      </div>
+      <div class="pack" data-value="500" tabindex="0">
+        <div class="amount">500 Robux</div>
+        <div class="label">Sorteo especial</div>
+      </div>
+    </div>
+
+    <div class="rules">
+      <strong>Nota:</strong> Cualquier sorteo debe seguir las normas de Roblox. Aquí se generan listas para sorteos transparentes y manuales. Nunca uses hacks ni generadores externos.
+    </div>
+
+    <form id="form">
+      <label for="user">Usuario (Roblox)</label>
+      <input id="user" name="user" type="text" placeholder="Ej: Junizox" required>
+
+      <label for="email">Email (opcional)</label>
+      <input id="email" name="email" type="email" placeholder="correo@ejemplo.com">
+
+      <button type="submit" class="primary">Enviar registro</button>
+    </form>
+
+    <div id="confirm" class="confirm" role="status" aria-live="polite"></div>
+  </div>
+
+  <aside class="right">
+    <div class="preview">
+      <div class="avatar" id="avatar">JZ</div>
+      <div>
+        <div style="font-weight:800">Junizox</div>
+        <div style="font-size:13px;color:#cfcfcf">Canal oficial y comunidad</div>
+        <div class="status" id="status">No registrado</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <button id="goChannel" class="primary" style="display:block;background:linear-gradient(90deg,#06a6ff,#0ea5a4);">Ir al canal</button>
+
+      <a id="btnIr" class="btn-ir" href="https://youtube.com/@junizox" target="_blank" rel="noopener">Ir al canal de Junizox</a>
+    </div>
+
+    <div style="margin-top:14px;font-size:13px;color:#cfcfcf">
+      ¿Necesitas ayuda? Usa el botón "Ir al canal" para ver reglas y videos.
+    </div>
+  </aside>
+</div>
+
+<div class="fall-area" id="fall"></div>
+
+<script>
+  // Packs selection logic
+  const packs = document.querySelectorAll('.pack');
+  let selectedPack = null;
+  packs.forEach(p=>{
+    p.addEventListener('click', ()=> togglePack(p));
+    p.addEventListener('keypress', (e)=> { if(e.key==='Enter') togglePack(p); });
+  });
+  function togglePack(el){
+    packs.forEach(x=>x.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPack = el.dataset.value;
+    document.getElementById('status').textContent = 'Seleccionado: ' + selectedPack + ' Robux';
+  }
+
+  // Form submission (local demo) - stores in localStorage and shows confirmation
+  const form = document.getElementById('form');
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const user = document.getElementById('user').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if(!user) return alert('Ingresa tu usuario.');
+    if(!selectedPack) return alert('Selecciona una opción de Robux para participar.');
+    const list = JSON.parse(localStorage.getItem('junizox_registros') || '[]');
+    list.push({user, email, selectedPack, ts:Date.now()});
+    localStorage.setItem('junizox_registros', JSON.stringify(list));
+    const confirm = document.getElementById('confirm');
+    confirm.style.display = 'block';
+    confirm.textContent = '¡Registro confirmado! Tu entrada para ' + selectedPack + ' Robux fue guardada.';
+    // reveal "Ir" button
+    document.getElementById('btnIr').style.display = 'inline-block';
+
+    // sparkle effect: create a few falling coins
+    for(let i=0;i<12;i++){ spawnCoin(); }
+    // update preview
+    document.getElementById('status').textContent = 'Registrado como ' + user + ' (' + selectedPack + 'R)';
+    const avatar = document.getElementById('avatar');
+    avatar.textContent = user.slice(0,2).toUpperCase();
+  });
+
+  // goChannel quick link (shows confirm then opens)
+  document.getElementById('goChannel').addEventListener('click', ()=>{
+    window.open('https://youtube.com/@junizox','_blank','noopener');
+  });
+
+  // Falling coin generator (pure CSS + JS, no external images)
+  const fallArea = document.getElementById('fall');
+  function spawnCoin(){
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    const left = Math.random()*100; // vw
+    coin.style.left = left + 'vw';
+    // random delay and duration
+    const dur = 3 + Math.random()*3;
+    const delay = Math.random()*1.2;
+    coin.style.animationDuration = dur + 's';
+    coin.style.top = (-Math.random()*20 - 20) + 'vh';
+    coin.style.opacity = 0.95;
+    fallArea.appendChild(coin);
+    // remove after animation
+    setTimeout(()=> coin.remove(), (dur+delay)*1000 + 500);
+  }
+
+  // small accessibility: keyboard select first pack by default
+  packs[0].classList.add('selected');
+  selectedPack = packs[0].dataset.value;
+  document.getElementById('status').textContent = 'Seleccionado: ' + selectedPack + ' Robux';
+
+  // expose a simple viewer for stored entries (dev)
+  window.showRegistros = function(){
+    const list = JSON.parse(localStorage.getItem('junizox_registros') || '[]');
+    alert('Registros guardados: ' + list.length + '\\n(Revisa console para detalle)');
+    console.log(list);
+  }
+</script>
+</body>
+</html>
